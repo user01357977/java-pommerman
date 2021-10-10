@@ -224,7 +224,7 @@ class GameTest {
         Game copy = game.copy();
         Types.MAX_GAME_TICKS = 800;
         Game.LOG_GAME = true;
-        Types.SAVE_GAME_REPLAY = true;
+        Game.LOG_GAME_JSON = true;
         //Run a single game with the players
         game.run(null, null, useSeparateThreads);
         System.out.println("game length: "+game.getTick());

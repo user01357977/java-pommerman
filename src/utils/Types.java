@@ -59,7 +59,6 @@ public class Types {
     // Decision time limit
     public static boolean CHECK_DECISION_TIME = true;
     public static int DECISION_TIME_LIMIT = 100; // ms to decide an action
-    public static boolean SAVE_GAME_REPLAY = false;
 
 
     public static IGameConfig getGameConfig() {return gameConfig;}

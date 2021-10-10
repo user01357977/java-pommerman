@@ -40,6 +40,7 @@ public class Game {
 
     // Log flags
     public static boolean LOG_GAME = false;
+    public static boolean LOG_GAME_JSON = false; // If the game is being logged, should it be saved to json
 
     // Variables for multi-threaded run 
     private Actor[] actors = new Actor[NUM_PLAYERS];
@@ -242,7 +243,7 @@ public class Game {
 
         // Save logged game
         if (LOG_GAME) {
-            if (SAVE_GAME_REPLAY) {
+            if (LOG_GAME_JSON) {
                 gameLog.serializeJSON(gameIdStr);
             } else {
                 gameLog.serialize();
@@ -565,7 +566,7 @@ public class Game {
      */
     public static Game getLastReplayGame(){
         GameLog lastLog;
-        if (Types.SAVE_GAME_REPLAY) {
+        if (Game.LOG_GAME_JSON) {
             lastLog = GameLog.deserializeLastJSON();
         } else {
             lastLog = GameLog.deserializeLast();
