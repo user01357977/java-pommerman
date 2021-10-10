@@ -21,6 +21,12 @@ public class MCTSParams implements ParameterSet {
     public final int CUSTOM_HEURISTIC = 0;
     public final int ADVANCED_HEURISTIC = 1;
 
+    public final int OP_RANDOM = 0;
+    public final int OP_UNLIMITED_BUFFER = 1;
+    public final int OP_LIMITED_BUFFER = 2;
+
+    public int op_model = OP_RANDOM;
+
     public double epsilon = 1e-6;
 
     // Parameters

@@ -19,6 +19,10 @@ public class RHEAParams implements ParameterSet {
     public boolean keep_parents_next_gen = true;
     private double mcts_budget_perc = 0.5;
 
+    // OPPONENT MODELLING
+    public int op_model = OP_RANDOM;
+    public int buffer_size = 20;
+
     // Efficiency settings
     public int frame_skip = 0;
     public int frame_skip_type = SKIP_SEQUENCE;
@@ -59,7 +63,7 @@ public class RHEAParams implements ParameterSet {
     // Don't change these directly. Use updateDependentVariables method instead.
     public int mcts_fm_budget = (int) (fm_budget * mcts_budget_perc);
     public int mcts_iteration_budget = (int) (iteration_budget * mcts_budget_perc);
-    public int tournament_size = (int) Math.min(2, population_size * tournament_size_perc);
+    public int tournament_size = (int) Math.max(2, population_size * tournament_size_perc);
     public int mc_rollouts_length = (int) (individual_length * mc_rollouts_length_perc);
 
     public Map<String, Object[]> getParameterValues() {

@@ -18,6 +18,15 @@ public class DoNothingPlayer extends Player {
         // default message
         return new int[Types.MESSAGE_LENGTH];
     }
+    @Override
+    public int[] get_predictions(int x) {
+        int [] res = new int[4];
+        return res;
+    }
+
+    @Override
+    public void print_accuracy(){
+    }
 
     @Override
     public Player copy() {

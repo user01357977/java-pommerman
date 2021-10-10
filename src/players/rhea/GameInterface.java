@@ -6,6 +6,7 @@ import players.heuristics.*;
 import players.rhea.evo.Individual;
 import players.rhea.evo.Mutation;
 import players.rhea.hybrids.MCTSNode;
+import players.rhea.utils.Constants;
 import players.rhea.utils.FMBudget;
 import players.rhea.utils.RHEAParams;
 import players.rhea.utils.Utilities;
@@ -21,6 +22,9 @@ import java.util.Random;
 import static players.rhea.utils.Constants.*;
 import static players.rhea.utils.Utilities.*;
 
+import players.rhea.op_m.unlimited_buffer;
+import players.rhea.op_m.limited_buffer;
+
 public class GameInterface {
 
     private StateHeuristic stateHeuristic;
@@ -29,17 +33,64 @@ public class GameInterface {
     private RHEAParams params;
     private int playerID;
     private Random random;
+    private limited_buffer limited_buffer;
+    private unlimited_buffer unlimited_buffer;
 
     private ElapsedCpuTimer elapsedTimer;
     private HashMap<Integer, Types.ACTIONS> action_mapping;
 
     private static double[] bounds = new double[]{-1, 1};
+    public int[][] predicted_actions;
 
     GameInterface(RHEAParams params, Random random, int playerID) {
         this.params = params;
         this.random = random;
         fmBudget = new FMBudget(params.fm_budget);
         this.playerID = playerID;
+        ArrayList<Types.ACTIONS> availableActions = Types.ACTIONS.all();
+        int max_actions = availableActions.size();
+        this.limited_buffer = new limited_buffer(playerID, max_actions, 20, this.random);
+        this.unlimited_buffer = new unlimited_buffer(playerID, max_actions, this.random);
+        this.predicted_actions = new int[Types.NUM_PLAYERS][Types.MAX_GAME_TICKS];
+        // For testing if it populates correctly
+        for (int i=0; i<Types.MAX_GAME_TICKS; i++) {
+            for (int p=0; p<Types.NUM_PLAYERS; p++) {
+                this.predicted_actions[p][i] = -1;
+            }
+        }
+    }
+
+    public void update_counts()
+    {
+        int[][] actions = this.get_actions_buffer();
+        if (params.op_model == OP_UNLIMITED_BUFFER) {
+            this.unlimited_buffer.update_counts(actions);
+        } else if (params.op_model == OP_LIMITED_BUFFER) {
+            this.limited_buffer.update_counts(actions);
+        }
+    }
+
+    public int[] get_moves_from_buffer(int gs_tick) {
+        int[] op_moves = new int[Types.NUM_PLAYERS];
+        for (int op=0; op < Types.NUM_PLAYERS; op++) {
+            if (op != playerID) {
+                if (params.op_model == OP_UNLIMITED_BUFFER) {
+                    op_moves[op] = this.unlimited_buffer.get_op_moves(op);
+                } else if (params.op_model == OP_LIMITED_BUFFER) {
+                    op_moves[op] = this.limited_buffer.get_op_moves(op);
+                } else if (params.op_model == OP_KNOW) {
+                    double u = random.nextDouble();
+                    double prob_of_knowing = 1.;
+                    if (u < prob_of_knowing) {
+                        op_moves[op] = rootState.actions_buffer[op][gs_tick];
+                    } else {
+                        int bound = rootState.nActions();
+                        op_moves[op] = random.nextInt(bound);
+                    }
+                }
+            }
+        }
+        return op_moves;
     }
 
     void initTick(GameState stateObs, ElapsedCpuTimer elapsedTimer) {
@@ -119,6 +170,10 @@ public class GameInterface {
         // Inform budget of usage
         fmBudget.use(params.individual_length * max_actions);
         return distribution;
+    }
+
+    public int get_current_tick() {
+        return rootState.getTick();
     }
 
     /**
@@ -414,14 +469,26 @@ public class GameInterface {
      * @param action - action for this player
      */
     public void advanceState(GameState gs, Types.ACTIONS action) {
-        int nPlayers = 4;
+        int nPlayers = Types.NUM_PLAYERS;
+        int [] moves = new int[Types.NUM_PLAYERS];
         Types.ACTIONS[] actionsAll = new Types.ACTIONS[nPlayers];
+        int tick = gs.getTick();
+        if (this.params.op_model != OP_RANDOM) {
+            moves = this.get_moves_from_buffer(tick);
+        }
+
 
         for (int i = 0; i < nPlayers; ++i) {
+
             if (playerID == i) {
                 actionsAll[i] = action;
             } else {
-                actionsAll[i] = opponentModel(gs);
+                if (this.params.op_model == OP_RANDOM) {
+                    actionsAll[i] = opponentModel(gs);
+                } else {
+                    actionsAll[i] = Types.ACTIONS.all().get(moves[i]);
+                }
+                this.predicted_actions[i][tick] = actionsAll[i].getKey();
             }
         }
 
@@ -465,6 +532,10 @@ public class GameInterface {
      */
     public double evaluateState(GameState a_gameState) {
         return stateHeuristic.evaluateState(a_gameState);
+    }
+
+    public int[][] get_actions_buffer() {
+        return this.rootState.actions_buffer;
     }
 
     /**

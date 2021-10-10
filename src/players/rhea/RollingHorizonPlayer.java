@@ -3,6 +3,7 @@ package players.rhea;
 import players.rhea.evo.Evolution;
 import players.rhea.utils.RHEAParams;
 import utils.ElapsedCpuTimer;
+import utils.Types;
 
 import java.util.*;
 
@@ -16,7 +17,9 @@ class RollingHorizonPlayer {
     private int[] actionBuffer;
     private boolean newBuffer;
 
-    private Evolution ea;
+    public int[] ub_moves;
+
+    public Evolution ea;
 
 
     RollingHorizonPlayer(Random randomGenerator, RHEAParams params, GameInterface gInterface) {
@@ -27,6 +30,7 @@ class RollingHorizonPlayer {
         Arrays.fill(actionBuffer, -1);
         newBuffer = true;
         ea = new Evolution(params, randomGenerator, gameInterface);
+        ub_moves = new int[Types.NUM_PLAYERS];
     }
 
     int getAction(ElapsedCpuTimer elapsedTimer, int max_actions) {
@@ -38,6 +42,7 @@ class RollingHorizonPlayer {
 //        System.out.println();
         // Find best next action within the allowed budget
         int action = max_actions;
+        this.gameInterface.update_counts();
         while (gameInterface.budget(elapsedTimer, params.iteration_budget - ea.getNIterations(),
                 null)) {
             action = ea.iteration();

@@ -37,6 +37,8 @@ public class GameState {
     // Index that is in control of the player in this GameState.
     private int playerIdx = -1;
 
+    // Actions buffer for Opponent modelling
+    public int[][] actions_buffer;
     // Current tick of the game.
     private int tick = 0;
 
@@ -103,6 +105,7 @@ public class GameState {
             model = new ForwardModel(size, gameMode);
         }
         this.model.init(seed, size, gameMode, null, null);
+        actions_buffer = new int[NUM_PLAYERS][MAX_GAME_TICKS];
     }
 
     /**
@@ -158,6 +161,7 @@ public class GameState {
 
         // Use this copy's player idx as determined earlier to update copy playerIdx and its assigned avatar.
         copy.playerIdx = copyIdx;
+        copy.actions_buffer = actions_buffer;
         if (copyIdx >= 0) {
             copy.avatar = (Avatar) copy.model.getAgents()[copyIdx];
             if (gameMode.equals(GAME_MODE.FFA) && message != null)

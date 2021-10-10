@@ -49,7 +49,7 @@ public class Types {
     public static boolean VISUALS = true;
     public static boolean LOGGING_STATISTICS = false;
 
-    public final static int NUM_PLAYERS = 4;  //Changing this is NOT going to work (Forward Model assumes 4 players).
+    public final static int NUM_PLAYERS = 2;  //Changing this is NOT going to work (Forward Model assumes 4 players).
     public static int NUM_ACTIONS = 6;        //Changing this is NOT going to work either.
 
     // Communication
@@ -59,7 +59,7 @@ public class Types {
     // Decision time limit
     public static boolean CHECK_DECISION_TIME = true;
     public static int DECISION_TIME_LIMIT = 100; // ms to decide an action
-    public static boolean SAVE_GAME_REPLAY = false;
+    public static boolean SAVE_GAME_REPLAY = true;
 
 
     public static IGameConfig getGameConfig() {return gameConfig;}
@@ -124,8 +124,10 @@ public class Types {
             HashSet<TILETYPE> types = new HashSet<>();
             types.add(AGENT0);
             types.add(AGENT1);
-            types.add(AGENT2);
-            types.add(AGENT3);
+            if (Types.NUM_PLAYERS > 2) {
+                types.add(AGENT2);
+                types.add(AGENT3);
+            }
             return types;
         }
 

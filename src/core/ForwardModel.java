@@ -1024,10 +1024,16 @@ public class ForwardModel {
         }
 
         // Add players in the corners
-        addAgent(1, 1, 0);
-        addAgent(board.length - 2, 1, 1);
-        addAgent(1, board[1].length - 2, 2);
-        addAgent(board.length - 2, board[1].length - 2, 3);
+        if (NUM_PLAYERS == 2) {
+            // MM to make opponents spawn at the mirror opposite positions, to alleviate possible bias coming from asymmetry
+            addAgent(1, 1, 0);
+            addAgent(board.length - 2, board[1].length - 2, 1);
+        } else {
+            addAgent(1, 1, 0);
+            addAgent(board.length - 2, 1, 1);
+            addAgent(1, board[1].length - 2, 2);
+            addAgent(board.length - 2, board[1].length - 2, 3);
+        }
     }
 
 

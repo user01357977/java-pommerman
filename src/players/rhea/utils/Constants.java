@@ -56,4 +56,11 @@ public class Constants {
     public final static int PLAYER_COUNT_HEURISTIC = 1;
     public final static int CUSTOM_HEURISTIC = 2;
     public final static int ADVANCED_HEURISTIC = 3;
+
+
+    // Opponent modelling
+    public final static int OP_RANDOM = 0;
+    public final static int OP_UNLIMITED_BUFFER = 1;
+    public final static int OP_LIMITED_BUFFER = 2;
+    public final static int OP_KNOW = 3;
 }

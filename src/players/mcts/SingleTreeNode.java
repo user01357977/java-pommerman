@@ -31,13 +31,16 @@ public class SingleTreeNode
 
     private GameState rootState;
     private StateHeuristic rootStateHeuristic;
+    private Random random;
+    public int[] predictions;
+    private MCTSPlayer player_ptr;
 
-    SingleTreeNode(MCTSParams p, Random rnd, int num_actions, Types.ACTIONS[] actions) {
-        this(p, null, -1, rnd, num_actions, actions, 0, null);
+    SingleTreeNode(MCTSParams p, Random rnd, int num_actions, Types.ACTIONS[] actions, MCTSPlayer player_ptr) {
+        this(p, null, -1, rnd, num_actions, actions, 0, null, player_ptr);
     }
 
     private SingleTreeNode(MCTSParams p, SingleTreeNode parent, int childIdx, Random rnd, int num_actions,
-                           Types.ACTIONS[] actions, int fmCallsCount, StateHeuristic sh) {
+                           Types.ACTIONS[] actions, int fmCallsCount, StateHeuristic sh, MCTSPlayer player_ptr) {
         this.params = p;
         this.fmCallsCount = fmCallsCount;
         this.parent = parent;
@@ -53,6 +56,9 @@ public class SingleTreeNode
         }
         else
             m_depth = 0;
+
+        this.predictions = new int[Types.NUM_PLAYERS];
+        this.player_ptr = player_ptr;
     }
 
     void setRootGameState(GameState gs)
@@ -99,7 +105,7 @@ public class SingleTreeNode
                 stop = (fmCallsCount + params.rollout_depth) > params.num_fmcalls;
             }
         }
-        //System.out.println(" ITERS " + numIters);
+//        System.out.println("MCTS ITERS " + numIters);
     }
 
     private SingleTreeNode treePolicy(GameState state) {
@@ -136,8 +142,9 @@ public class SingleTreeNode
         //Roll the state
         roll(state, actions[bestAction]);
 
+
         SingleTreeNode tn = new SingleTreeNode(params,this,bestAction,this.m_rnd,num_actions,
-                actions, fmCallsCount, rootStateHeuristic);
+                actions, fmCallsCount, rootStateHeuristic, player_ptr);
         children[bestAction] = tn;
         return tn;
     }
@@ -145,9 +152,11 @@ public class SingleTreeNode
     private void roll(GameState gs, Types.ACTIONS act)
     {
         //Simple, all random first, then my position.
-        int nPlayers = 4;
-        Types.ACTIONS[] actionsAll = new Types.ACTIONS[4];
+        int nPlayers = Types.NUM_PLAYERS;
+        Types.ACTIONS[] actionsAll = new Types.ACTIONS[Types.NUM_PLAYERS];
         int playerId = gs.getPlayerId() - Types.TILETYPE.AGENT0.getKey();
+        int actionIdx = 0;
+        int[] op_moves = new int[Types.NUM_PLAYERS];
 
         for(int i = 0; i < nPlayers; ++i)
         {
@@ -155,8 +164,17 @@ public class SingleTreeNode
             {
                 actionsAll[i] = act;
             }else {
-                int actionIdx = m_rnd.nextInt(gs.nActions());
+                if (params.op_model == params.OP_RANDOM) {
+                    actionIdx = m_rnd.nextInt(gs.nActions());
+                } else if (params.op_model == params.OP_LIMITED_BUFFER) {
+                    op_moves[i] = this.player_ptr.limited_buffer.get_op_moves(i);
+                    actionIdx = op_moves[i];
+                } else if (params.op_model == params.OP_UNLIMITED_BUFFER) {
+                    op_moves[i] = this.player_ptr.unlimited_buffer.get_op_moves(i);
+                    actionIdx = op_moves[i];
+                }
                 actionsAll[i] = Types.ACTIONS.all().get(actionIdx);
+                predictions[i] = actionIdx;
             }
         }
 

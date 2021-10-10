@@ -63,4 +63,7 @@ public abstract class Player {
         this.playerID = playerID;
         this.seed = seed;
     }
+
+    public abstract void print_accuracy();
+    public abstract int[] get_predictions(int tick);
 }

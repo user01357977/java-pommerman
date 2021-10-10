@@ -20,6 +20,8 @@ public class Evolution {
     private Individual[] population;
 
     private GameInterface gInterface;
+    public int[][] predicted_actions;
+    private int playerID;
 
     public Evolution(RHEAParams params, Random random, GameInterface gInterface) {
         this.params = params;
@@ -28,8 +30,9 @@ public class Evolution {
         crossoverClass = new Crossover(params, random);
         selectionClass = new Selection(params, random);
         nIterations = 0;
-
         this.gInterface = gInterface;
+        this.predicted_actions = new int[4][800];
+        this.playerID = playerID - 10;
     }
 
     public void init(int max_actions) {
@@ -57,6 +60,8 @@ public class Evolution {
 
         // Update population
         combine_and_sort_population(offspring);
+
+
 
         return getBestAction(0);
     }

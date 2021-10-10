@@ -125,10 +125,15 @@ public class LevelGenerator {
 
         // Locate all the players in the board. they must respect a Types.CORNER_DISTANCE to
         // their respective corners.
-        board[Types.CORNER_DISTANCE][Types.CORNER_DISTANCE] = Types.TILETYPE.AGENT0.getKey();
-        board[size-Types.CORNER_DISTANCE -1][Types.CORNER_DISTANCE] = Types.TILETYPE.AGENT1.getKey();
-        board[size-Types.CORNER_DISTANCE -1][size-Types.CORNER_DISTANCE -1] = Types.TILETYPE.AGENT2.getKey();
-        board[Types.CORNER_DISTANCE][size-Types.CORNER_DISTANCE -1] = Types.TILETYPE.AGENT3.getKey();
+        if (Types.NUM_PLAYERS == 2) {
+            board[Types.CORNER_DISTANCE][Types.CORNER_DISTANCE] = Types.TILETYPE.AGENT0.getKey();
+            board[size - Types.CORNER_DISTANCE - 1][size - Types.CORNER_DISTANCE - 1] = Types.TILETYPE.AGENT1.getKey();
+        } else {
+            board[Types.CORNER_DISTANCE][Types.CORNER_DISTANCE] = Types.TILETYPE.AGENT0.getKey();
+            board[size - Types.CORNER_DISTANCE - 1][Types.CORNER_DISTANCE] = Types.TILETYPE.AGENT1.getKey();
+            board[size - Types.CORNER_DISTANCE - 1][size - Types.CORNER_DISTANCE - 1] = Types.TILETYPE.AGENT2.getKey();
+            board[Types.CORNER_DISTANCE][size - Types.CORNER_DISTANCE - 1] = Types.TILETYPE.AGENT3.getKey();
+        }
 
         // Keep a list of the agent positions
         ArrayList<Vector2d> agent_positions = new ArrayList<>();
