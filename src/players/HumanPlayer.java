@@ -20,15 +20,6 @@ public class HumanPlayer extends Player {
     public KeyController getKeyAdapter() {return keyboard;}
 
     @Override
-    public void print_accuracy(){
-    }
-
-    @Override
-    public int[] get_predictions(int x) {
-        int [] res = new int[4];
-        return res;
-    }
-    @Override
     public Types.ACTIONS act(GameState gs)
     {
         return keyboard.getNextAction();

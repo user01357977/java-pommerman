@@ -8,8 +8,7 @@ import utils.ElapsedCpuTimer;
 import utils.Types;
 
 import java.util.Random;
-
-import static players.rhea.utils.Constants.*;
+import static players.rhea.utils.Constants.TIME_BUDGET;
 
 public class RHEAPlayer extends ParameterizedPlayer {
     private RollingHorizonPlayer player;
@@ -46,18 +45,6 @@ public class RHEAPlayer extends ParameterizedPlayer {
         player = new RollingHorizonPlayer(randomGenerator, this.params, gInterface);
     }
 
-    @Override
-    public void print_accuracy() {
-    }
-
-    @Override
-    public int[] get_predictions(int tick) {
-        int[] predicted_actions = new int[Types.NUM_PLAYERS];
-        for (int p=0; p<Types.NUM_PLAYERS; p++) {
-            predicted_actions[p] = gInterface.predicted_actions[p][tick];
-        }
-        return predicted_actions;
-    }
     @Override
     public Types.ACTIONS act(GameState gs) {
         ElapsedCpuTimer elapsedTimer = null;

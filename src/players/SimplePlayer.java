@@ -42,15 +42,6 @@ public class SimplePlayer extends Player {
     }
 
     @Override
-    public int[] get_predictions(int x) {
-        int [] res = new int[4];
-        return res;
-    }
-    @Override
-    public void print_accuracy(){
-    }
-
-    @Override
     public void reset(long seed, int playerID) {
         super.reset(seed, playerID);
         random = new Random(seed);

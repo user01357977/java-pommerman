@@ -17,14 +17,11 @@ import java.util.Scanner;
  */
 public class GameLog implements Serializable {
     private List<Types.ACTIONS[]> actionsArrayList = new ArrayList<>(Types.MAX_GAME_TICKS);
-    private List<int[][]> predArrayList = new ArrayList<int[][]>(Types.MAX_GAME_TICKS);
-    public List<Types.RESULT> outcomes = new ArrayList<>(Types.NUM_PLAYERS);
-    public List<String[]> players_names = new ArrayList<>(Types.NUM_PLAYERS);
     private long seed;
     private int size;
     private Types.GAME_MODE gameMode;
-    public static String GAMELOGS_PATH = "/Users/sseccatoor/gits/qmul/gai1/java-pommerman/res/gamelogs/ser";
-    public static String JSON_GAMELOGS_PATH = "/Users/sseccatoor/gits/qmul/gai1/java-pommerman/res/gamelogs/";
+    private final static String GAMELOGS_PATH = "res/gamelogs/ser";
+    private final static String JSON_GAMELOGS_PATH = "res/gamelogs/";
 
     public static int REP = 0;
 
@@ -37,17 +34,7 @@ public class GameLog implements Serializable {
     public void addActions(Types.ACTIONS[] actions){
         actionsArrayList.add(actions);
     }
-    public void addPlayerNames(String[] player_str){
-        players_names.add(player_str);
-    }
 
-    public void addPredictions(int[][] predictions){
-        predArrayList.add(predictions);
-    }
-
-    public void addOutcomes(Types.RESULT outcome){
-        outcomes.add(outcome);
-    }
     public GameState getStartingGameState(){
         return new GameState(seed, size, gameMode);
     }

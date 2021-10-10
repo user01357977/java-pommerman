@@ -1,13 +1,11 @@
 import core.Game;
 import players.*;
-import utils.GameLog;
 import utils.Types;
 import players.rhea.utils.Constants;
 import players.mcts.MCTSPlayer;
 import players.mcts.MCTSParams;
+import players.rhea.RHEAPlayer;
 import players.rhea.utils.RHEAParams;
-import players.rhea_minimax.RHEAPlayer_minimax;
-import players.rhea_minimax.utils.RHEAParams_minimax;
 
 
 import java.util.ArrayList;
@@ -20,84 +18,52 @@ public class Test {
         long seed = System.currentTimeMillis();
         int boardSize = Types.BOARD_SIZE;
         Types.GAME_MODE gameMode = Types.GAME_MODE.FFA;
-        Types.DEFAULT_VISION_RANGE = -1;
         boolean useSeparateThreads = false;
 
         Game game = new Game(seed, boardSize, Types.GAME_MODE.FFA, "");
-//        Game game = new Game(seed, boardSize, Types.GAME_MODE.FFA, "");
 
         // Key controllers for human player s (up to 2 so far).
         KeyController ki1 = new KeyController(true);
         KeyController ki2 = new KeyController(false);
 
         // Create players
-//        ArrayList<Player> players = new ArrayList<>();
+        ArrayList<Player> players = new ArrayList<>();
+        int playerID = Types.TILETYPE.AGENT0.getKey();
 
-//        int playerID = Types.TILETYPE.AGENT0.getKey();
-//
-//        MCTSParams mctsParams = new MCTSParams();
-//        mctsParams.stop_type = mctsParams.STOP_ITERATIONS;
-//        mctsParams.heuristic_method = mctsParams.CUSTOM_HEURISTIC;
-//
-//        RHEAParams rheaParams = new RHEAParams();
-//        rheaParams.heurisic_type = Constants.CUSTOM_HEURISTIC;
-//        rheaParams.budget_type = Constants.TIME_BUDGET;
-//
-////        players.add(new MCTSPlayer(seed, playerID++, mctsParams));
-//        //players.add(new MCTSPlayer(seed, playerID++, mctsParams));
-//
-////        players.add(new SimplePlayer(seed, playerID++));
-////        players.add(new RHEAPlayer_minimax(seed, playerID++, rheaParams));
-////        players.add(new SimplePlayer(seed, playerID++));
-//        MCTSParams mcts_params = new MCTSParams();
-//        mctsParams.stop_type = mctsParams.STOP_TIME;
-//        mctsParams.num_time = 80;
-//        players.add(new MCTSPlayer(seed, playerID++, mcts_params));
-////        players.add(new RHEAPlayer(seed, playerID++, rheaParams));
-//        RHEAParams_minimax rheaParams_minimax = new RHEAParams_minimax();
-////        rheaParams_minimax.budget_type = Constants.ITERATION_BUDGET;
-//        rheaParams_minimax.budget_type = Constants.TIME_BUDGET;
-////        rheaParams_minimax.iteration_budget = 50;
-//        rheaParams_minimax.time_budget = 40;
-//        rheaParams_minimax.population_size = 1;
-//        rheaParams_minimax.individual_length = 12;
-//        rheaParams_minimax.offspring_count = 1;
-//        rheaParams_minimax.heurisic_type = Constants.CUSTOM_HEURISTIC;
-//        players.add(new RHEAPlayer_minimax(seed, playerID++, rheaParams_minimax));
-//        RHEAParams_minimax rheaParams_minimax2 = new RHEAParams_minimax();
-////        rheaParams_minimax.budget_type = Constants.ITERATION_BUDGET;
-//        rheaParams_minimax2.budget_type = Constants.TIME_BUDGET;
-////        rheaParams_minimax.iteration_budget = 50;
-//        rheaParams_minimax2.time_budget = 40;
-//        rheaParams_minimax2.population_size = 1;
-//        rheaParams_minimax2.individual_length = 12;
-//        rheaParams_minimax2.offspring_count = 1;
-//        rheaParams_minimax2.heurisic_type = 4;
-//        players.add(new MCTSPlayer(seed, playerID++, mcts_params));
-//        players.add(new RHEAPlayer_minimax(seed, playerID++, rheaParams_minimax2));
-//        // Make sure we have exactly NUM_PLAYERS players
-//        assert players.size() == Types.NUM_PLAYERS : "There should be " + Types.NUM_PLAYERS +
-//                " added to the game, but there are " + players.size();
-//
-//
-//        //Assign players and run the game.
-//        game.setPlayers(players);
-//
-//        //Run a single game with the players
-//        Run.runGame(game, ki1, ki2, useSeparateThreads);
+        MCTSParams mctsParams = new MCTSParams();
+        mctsParams.stop_type = mctsParams.STOP_ITERATIONS;
+        mctsParams.heuristic_method = mctsParams.CUSTOM_HEURISTIC;
+
+        RHEAParams rheaParams = new RHEAParams();
+        rheaParams.heurisic_type = Constants.CUSTOM_HEURISTIC;
+
+        players.add(new MCTSPlayer(seed, playerID++, mctsParams));
+        //players.add(new MCTSPlayer(seed, playerID++, mctsParams));
+
+//        players.add(new SimplePlayer(seed, playerID++));
+        players.add(new RHEAPlayer(seed, playerID++, rheaParams));
+//        players.add(new SimplePlayer(seed, playerID++));
+        players.add(new MCTSPlayer(seed, playerID++, new MCTSParams()));
+        players.add(new RHEAPlayer(seed, playerID++, rheaParams));
+//        players.add(new HumanPlayer(ki1, playerID++));
+
+        // Make sure we have exactly NUM_PLAYERS players
+        assert players.size() == Types.NUM_PLAYERS : "There should be " + Types.NUM_PLAYERS +
+                " added to the game, but there are " + players.size();
+
+
+        //Assign players and run the game.
+        game.setPlayers(players);
+
+        //Run a single game with the players
+        Run.runGame(game, ki1, ki2, useSeparateThreads);
 
         /* Uncomment to run the replay of the previous game: */
-        if (game.isLogged()){
-            GameLog gl = game.getGameLog();
-            gl.GAMELOGS_PATH = "/Users/sseccatoor/gits/qmul/gai1/java-pommerman/res/ser/test";
-            gl.JSON_GAMELOGS_PATH = "/Users/sseccatoor/gits/qmul/gai1/java-pommerman/res/test/";
-            Game replay = Game.getLastReplayGame();
-            replay.LOG_GAME = false;
-
-            System.out.println(replay.nPlayers());
-            Run.runGame(replay, ki1, ki2, useSeparateThreads);
-            assert(replay.getGameState().equals(game.getGameState()));
-        }
+//        if (game.isLogged()){
+//            Game replay = Game.getLastReplayGame();
+//            Run.runGame(replay, ki1, ki2, useSeparateThreads);
+//            assert(replay.getGameState().equals(game.getGameState()));
+//        }
 
 
 

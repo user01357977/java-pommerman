@@ -29,15 +29,6 @@ public class SimonSaysPlayer extends Player {
         actionsQueue = actions;
     }
 
-    @Override
-    public int[] get_predictions(int x) {
-        int [] res = new int[4];
-        return res;
-    }
-    @Override
-    public void print_accuracy(){
-    }
-
     public SimonSaysPlayer(int Idx){
         super(0, Idx);
         actionsQueue = new ArrayDeque<>();

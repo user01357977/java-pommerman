@@ -5,8 +5,6 @@ import players.mcts.MCTSPlayer;
 import players.rhea.RHEAPlayer;
 import players.rhea.utils.Constants;
 import players.rhea.utils.RHEAParams;
-import players.rhea_minimax.RHEAPlayer_minimax;
-import players.rhea_minimax.utils.RHEAParams_minimax;
 import utils.*;
 
 import java.util.*;
@@ -87,8 +85,6 @@ public class Run {
 
 
                 switch(agentType) {
-                    case -1:
-                        continue;
                     case 0:
                         p = new DoNothingPlayer(playerID++);
                         playerStr[i-4] = "DoNothing";
@@ -107,109 +103,24 @@ public class Run {
                         break;
                     case 4:
                         RHEAParams rheaParams = new RHEAParams();
-                        rheaParams.op_model = Constants.OP_RANDOM;
-                        rheaParams.budget_type = Constants.FM_BUDGET;
-                        rheaParams.fm_budget = 2000;
-                        rheaParams.population_size = 1;
+                        rheaParams.budget_type = Constants.ITERATION_BUDGET;
+                        rheaParams.iteration_budget = 200;
                         rheaParams.individual_length = 12;
-                        rheaParams.offspring_count = 1;
                         rheaParams.heurisic_type = Constants.CUSTOM_HEURISTIC;
-                        rheaParams.elitism = true;
+                        rheaParams.mutation_rate = 0.5;
+
                         p = new RHEAPlayer(seed, playerID++, rheaParams);
-                        playerStr[i-4] = "RHEA RANDOM";
+                        playerStr[i-4] = "RHEA";
                         break;
                     case 5:
                         MCTSParams mctsParams = new MCTSParams();
-                        mctsParams.op_model = Constants.OP_RANDOM;
-                        mctsParams.stop_type = mctsParams.STOP_FMCALLS;
-                        mctsParams.num_fmcalls = 2000;
+                        mctsParams.stop_type = mctsParams.STOP_ITERATIONS;
+                        mctsParams.num_iterations = 200;
                         mctsParams.rollout_depth = 12;
+
                         mctsParams.heuristic_method = mctsParams.CUSTOM_HEURISTIC;
                         p = new MCTSPlayer(seed, playerID++, mctsParams);
-                        playerStr[i-4] = "MCTS RANDOM";
-                        break;
-                    case 6:
-                        RHEAParams rheaParams_lb = new RHEAParams();
-                        rheaParams_lb.op_model = Constants.OP_LIMITED_BUFFER;
-                        rheaParams_lb.budget_type = Constants.FM_BUDGET;
-                        rheaParams_lb.fm_budget = 2000;
-                        rheaParams_lb.population_size = 1;
-                        rheaParams_lb.individual_length = 12;
-                        rheaParams_lb.offspring_count = 1;
-                        rheaParams_lb.heurisic_type = Constants.CUSTOM_HEURISTIC;
-                        rheaParams_lb.elitism = true;
-                        p = new RHEAPlayer(seed, playerID++, rheaParams_lb);
-                        playerStr[i-4] = "RHEA LB";
-                        break;
-                    case 7:
-                        RHEAParams rheaParams_ub = new RHEAParams();
-                        rheaParams_ub.op_model = Constants.OP_UNLIMITED_BUFFER;
-                        rheaParams_ub.budget_type = Constants.FM_BUDGET;
-                        rheaParams_ub.fm_budget = 2000;
-                        rheaParams_ub.population_size = 1;
-                        rheaParams_ub.individual_length = 12;
-                        rheaParams_ub.offspring_count = 1;
-                        rheaParams_ub.heurisic_type = Constants.CUSTOM_HEURISTIC;
-                        rheaParams_ub.elitism = true;
-                        p = new RHEAPlayer(seed, playerID++, rheaParams_ub);
-                        playerStr[i-4] = "RHEA UB";
-                        break;
-                    case 8:
-                        RHEAParams_minimax rheaParams_mm = new RHEAParams_minimax();
-                        rheaParams_mm.elitism = true;
-                        rheaParams_mm.budget_type = Constants.FM_BUDGET;
-                        rheaParams_mm.fm_budget = 2000;
-                        rheaParams_mm.population_size = 1;
-                        rheaParams_mm.individual_length = 12;
-                        rheaParams_mm.offspring_count = 1;
-                        rheaParams_mm.heurisic_type = Constants.CUSTOM_HEURISTIC;
-                        p = new RHEAPlayer_minimax(seed, playerID++, rheaParams_mm);
-                        playerStr[i-4] = "RHEA MINIMAX";
-                        break;
-                    case 9:
-                        MCTSParams mctsParams_lb = new MCTSParams();
-                        mctsParams_lb.op_model = mctsParams_lb.OP_LIMITED_BUFFER;
-                        mctsParams_lb.stop_type = mctsParams_lb.STOP_FMCALLS;
-                        mctsParams_lb.num_fmcalls = 2000;
-                        mctsParams_lb.rollout_depth = 12;
-                        mctsParams_lb.heuristic_method = mctsParams_lb.CUSTOM_HEURISTIC;
-                        p = new MCTSPlayer(seed, playerID++, mctsParams_lb);
-                        playerStr[i-4] = "MCTS LB";
-                        break;
-                    case 10:
-                        MCTSParams mctsParams_ub = new MCTSParams();
-                        mctsParams_ub.op_model = mctsParams_ub.OP_UNLIMITED_BUFFER;
-                        mctsParams_ub.stop_type = mctsParams_ub.STOP_FMCALLS;
-                        mctsParams_ub.num_fmcalls = 2000;
-                        mctsParams_ub.rollout_depth = 12;
-                        mctsParams_ub.heuristic_method = mctsParams_ub.CUSTOM_HEURISTIC;
-                        p = new MCTSPlayer(seed, playerID++, mctsParams_ub);
-                        playerStr[i-4] = "MCTS UB";
-                        break;
-                    case 11:
-                        RHEAParams_minimax rheaParams_mm5 = new RHEAParams_minimax();
-                        rheaParams_mm5.elitism = true;
-                        rheaParams_mm5.budget_type = Constants.FM_BUDGET;
-                        rheaParams_mm5.fm_budget = 2000;
-                        rheaParams_mm5.population_size = 5;
-                        rheaParams_mm5.individual_length = 12;
-                        rheaParams_mm5.offspring_count = 1;
-                        rheaParams_mm5.heurisic_type = Constants.CUSTOM_HEURISTIC;
-                        p = new RHEAPlayer_minimax(seed, playerID++, rheaParams_mm5);
-                        playerStr[i-4] = "RHEA MINIMAX";
-                        break;
-                    case 12:
-                        RHEAParams rheaParams_know = new RHEAParams();
-                        rheaParams_know.op_model = Constants.OP_KNOW;
-                        rheaParams_know.budget_type = Constants.FM_BUDGET;
-                        rheaParams_know.fm_budget = 2000;
-                        rheaParams_know.population_size = 1;
-                        rheaParams_know.individual_length = 12;
-                        rheaParams_know.offspring_count = 1;
-                        rheaParams_know.heurisic_type = Constants.CUSTOM_HEURISTIC;
-                        rheaParams_know.elitism = true;
-                        p = new RHEAPlayer(seed, playerID++, rheaParams_know);
-                        playerStr[i-4] = "RHEA KNOW";
+                        playerStr[i-4] = "MCTS";
                         break;
                     default:
                         System.out.println("WARNING: Invalid agent ID: " + agentType );
@@ -229,7 +140,6 @@ public class Run {
 
             // Make sure we have exactly NUM_PLAYERS players
             assert players.size() == Types.NUM_PLAYERS;
-            game.players_names = playerStr;
             game.setPlayers(players);
 
             System.out.print(gameIdStr + " [");
@@ -317,9 +227,6 @@ public class Run {
                 int[] overtimes = g.getPlayerOvertimes();
                 for(int j = 0; j < overtimes.length; ++j)
                     overtimeCount[j] += overtimes[j];
-
-                for (int p=0; p < Types.NUM_PLAYERS; p++)
-                    players.get(p).print_accuracy();
 
             }
         }

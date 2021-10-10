@@ -18,15 +18,6 @@ public class RandomPlayer extends Player {
         super.reset(seed, playerID);
         random = new Random(seed);
     }
-    @Override
-    public int[] get_predictions(int x) {
-        int [] res = new int[4];
-        return res;
-    }
-
-    @Override
-    public void print_accuracy(){
-    }
 
     @Override
     public Types.ACTIONS act(GameState gs) {

@@ -2,7 +2,6 @@ package core;
 
 import objects.Avatar;
 import objects.GameObject;
-import players.KeyController;
 import players.Player;
 import players.SimonSaysPlayer;
 import utils.*;
@@ -26,7 +25,6 @@ public class Game {
 
     // List of players of the game
     private ArrayList<Player> players;
-    public String[] players_names;
 
     // Mode of the game being played. This could be FFA, TEAM or TEAM_RADIO.
     private Types.GAME_MODE gameMode;
@@ -41,7 +39,7 @@ public class Game {
     private String gameIdStr;
 
     // Log flags
-    public static boolean LOG_GAME = true;
+    public static boolean LOG_GAME = false;
 
     // Variables for multi-threaded run 
     private Actor[] actors = new Actor[NUM_PLAYERS];
@@ -205,7 +203,6 @@ public class Game {
         Types.RESULT[] results = null;
         if (LOG_GAME)
             gameLog = new GameLog(seed, size, gameMode);
-            gameLog.addPlayerNames(this.players_names);  // ADD BACK
 
         if (separateThreads) {
             createActors();
@@ -288,13 +285,6 @@ public class Game {
         // Log actions
         if (LOG_GAME) {
             gameLog.addActions(actions);
-            Player p;
-            int[][] predictions = new int[NUM_PLAYERS][NUM_PLAYERS];
-            for (int pIdx = 0; pIdx< NUM_PLAYERS; pIdx++) {
-                p = players.get(pIdx);
-                predictions[pIdx] = p.get_predictions(getTick());
-            }
-            gameLog.addPredictions(predictions);
         }
 
         // Advance the game state
@@ -310,10 +300,6 @@ public class Game {
     /**
      * Get player actions, 1 for each avatar still in the game. Called at every frame.
      */
-    public void addPlayerNameToLog(String[] player_str) {
-        gameLog.addPlayerNames(player_str);
-    }
-
     private Types.ACTIONS[] getAvatarActions() {
         // Get player actions, 1 for each avatar still in the game
         Types.ACTIONS[] actions = new Types.ACTIONS[NUM_PLAYERS];
@@ -327,8 +313,6 @@ public class Game {
                 ect.setMaxTimeMillis(Types.DECISION_TIME_LIMIT);
 
                 actions[i] = p.act(gameStateObservations[i]);
-                int ct = getTick();
-                gs.actions_buffer[i][ct] = actions[i].getKey(); //ADD BACK
 
                 long elapsedTime = ect.elapsedMillis();
                 if(CHECK_DECISION_TIME && elapsedTime > DECISION_TIME_LIMIT)
@@ -476,9 +460,7 @@ public class Game {
                 System.out.print(", ");
         }
 
-        for (int i=0; i< NUM_PLAYERS; i++) {
-            gameLog.addOutcomes(results[i]); // ADD BACK
-        }
+//        }
         return results;
     }
 
@@ -604,24 +586,24 @@ public class Game {
 
             Queue<ACTIONS> p1actionsQueue = new ArrayDeque<>();
             Queue<ACTIONS> p2actionsQueue = new ArrayDeque<>();
-//            Queue<ACTIONS> p3actionsQueue = new ArrayDeque<>();
-//            Queue<ACTIONS> p4actionsQueue = new ArrayDeque<>();
+            Queue<ACTIONS> p3actionsQueue = new ArrayDeque<>();
+            Queue<ACTIONS> p4actionsQueue = new ArrayDeque<>();
 
             List<ACTIONS[]> actionsArrayList = log.getActions();
 
             for (ACTIONS[] actions : actionsArrayList) {
                 p1actionsQueue.add(actions[0]);
                 p2actionsQueue.add(actions[1]);
-//                p3actionsQueue.add(actions[2]);
-//                p4actionsQueue.add(actions[3]);
+                p3actionsQueue.add(actions[2]);
+                p4actionsQueue.add(actions[3]);
             }
 
             ArrayList<Player> players = new ArrayList<>();
             int playerID = TILETYPE.AGENT0.getKey();
             players.add(new SimonSaysPlayer(playerID++, p1actionsQueue));
             players.add(new SimonSaysPlayer(playerID++, p2actionsQueue));
-//            players.add(new SimonSaysPlayer(playerID++, p3actionsQueue)); //REMOVE BACK
-//            players.add(new SimonSaysPlayer(playerID++, p4actionsQueue)); //REMOVE BACK
+            players.add(new SimonSaysPlayer(playerID++, p3actionsQueue));
+            players.add(new SimonSaysPlayer(playerID++, p4actionsQueue));
 
             game.setPlayers(players);
         }

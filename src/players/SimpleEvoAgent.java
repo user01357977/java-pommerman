@@ -45,14 +45,6 @@ public class SimpleEvoAgent extends Player {
     }
 
     @Override
-    public int[] get_predictions(int x) {
-        int [] res = new int[4];
-        return res;
-    }
-    @Override
-    public void print_accuracy(){
-    }
-    @Override
     public int[] getMessage() {
         // default message
         return new int[Types.MESSAGE_LENGTH];
